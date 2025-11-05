@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StressBank™</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tagline {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .balance-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .balance-amount {
+            font-size: 56px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .balance-change {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .balance-change.positive {
+            color: #a7f3d0;
+        }
+        
+        .chart-section {
+            padding: 30px;
+            background: #f7fafc;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
+            gap: 8px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .bar.negative {
+            background: linear-gradient(180deg, #fc8181 0%, #f56565 100%);
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        .bar-label {
+            font-size: 11px;
+            color: #718096;
+            text-align: center;
+        }
+        
+        .transactions-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+        
+        .transaction:hover {
+            background: #f7fafc;
+        }
+        
+        .transaction-left {
+            flex: 1;
+        }
+        
+        .transaction-time {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+        
+        .transaction-desc {
+            font-size: 16px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        .transaction-stress {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+        
+        .transaction-amount {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        
+        .transaction-amount.positive {
+            color: #48bb78;
+        }
+        
+        .transaction-amount.negative {
+            color: #f56565;
+        }
+        
+        .summary {
+            background: #edf2f7;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        
+        .summary-item {
+            flex: 1;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .summary-value.earned {
+            color: #48bb78;
+        }
+        
+        .summary-value.spent {
+            color: #f56565;
+        }
+        
+        .footer {
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #a0aec0;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">StressBank™</div>
+            <div class="tagline">Your Emotional Labor, Monetized</div>
+        </div>
+        
+        <div class="balance-section">
+            <div class="balance-label">CURRENT BALANCE</div>
+            <div class="balance-amount">₴347</div>
+            <div class="balance-change positive">+127 credits today (↑57%)</div>
+        </div>
+        
+        <div class="chart-section">
+            <div class="chart-title">12-Hour Stress Credit Flow</div>
+            <div class="chart">
+                <div class="chart-bars">
+                    <div class="bar-container">
+                        <div class="bar" style="height: 35%"></div>
+                        <div class="bar-label">8AM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 65%"></div>
+                        <div class="bar-label">9AM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 50%"></div>
+                        <div class="bar-label">10AM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar negative" style="height: 20%"></div>
+                        <div class="bar-label">11AM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar negative" style="height: 25%"></div>
+                        <div class="bar-label">12PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 45%"></div>
+                        <div class="bar-label">1PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 90%"></div>
+                        <div class="bar-label">2PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 75%"></div>
+                        <div class="bar-label">3PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 55%"></div>
+                        <div class="bar-label">4PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 70%"></div>
+                        <div class="bar-label">5PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 40%"></div>
+                        <div class="bar-label">6PM</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar negative" style="height: 15%"></div>
+                        <div class="bar-label">7PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="transactions-section">
+            <div class="section-title">Transaction History</div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">7:45 AM</div>
+                    <div class="transaction-desc">Morning alarm / Snooze cycle</div>
+                    <div class="transaction-stress">Stress Level: 42/100</div>
+                </div>
+                <div class="transaction-amount negative">-4₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">8:30 AM</div>
+                    <div class="transaction-desc">Rush hour commute</div>
+                    <div class="transaction-stress">Stress Level: 68/100</div>
+                </div>
+                <div class="transaction-amount positive">+9₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">9:15 AM</div>
+                    <div class="transaction-desc">Email avalanche (47 unread)</div>
+                    <div class="transaction-stress">Stress Level: 71/100</div>
+                </div>
+                <div class="transaction-amount positive">+11₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">10:45 AM</div>
+                    <div class="transaction-desc">Focused work / Flow state</div>
+                    <div class="transaction-stress">Stress Level: 35/100</div>
+                </div>
+                <div class="transaction-amount negative">-8₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">11:30 AM</div>
+                    <div class="transaction-desc">Coffee break with colleague</div>
+                    <div class="transaction-stress">Stress Level: 28/100</div>
+                </div>
+                <div class="transaction-amount negative">-11₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">1:15 PM</div>
+                    <div class="transaction-desc">Lunch meeting (small talk anxiety)</div>
+                    <div class="transaction-stress">Stress Level: 63/100</div>
+                </div>
+                <div class="transaction-amount positive">+7₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">2:30 PM</div>
+                    <div class="transaction-desc">Presentation to senior leadership</div>
+                    <div class="transaction-stress">Stress Level: 89/100</div>
+                </div>
+                <div class="transaction-amount positive">+20₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">3:45 PM</div>
+                    <div class="transaction-desc">Urgent client call / Crisis management</div>
+                    <div class="transaction-stress">Stress Level: 82/100</div>
+                </div>
+                <div class="transaction-amount positive">+16₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">4:30 PM</div>
+                    <div class="transaction-desc">Deadline crunch / Multitasking</div>
+                    <div class="transaction-stress">Stress Level: 76/100</div>
+                </div>
+                <div class="transaction-amount positive">+13₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">5:45 PM</div>
+                    <div class="transaction-desc">Traffic jam / Construction detour</div>
+                    <div class="transaction-stress">Stress Level: 70/100</div>
+                </div>
+                <div class="transaction-amount positive">+10₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">6:30 PM</div>
+                    <div class="transaction-desc">Cooking dinner / Music playing</div>
+                    <div class="transaction-stress">Stress Level: 38/100</div>
+                </div>
+                <div class="transaction-amount negative">-6₴</div>
+            </div>
+            
+            <div class="transaction">
+                <div class="transaction-left">
+                    <div class="transaction-time">7:45 PM</div>
+                    <div class="transaction-desc">Evening wind-down / Netflix</div>
+                    <div class="transaction-stress">Stress Level: 22/100</div>
+                </div>
+                <div class="transaction-amount negative">-14₴</div>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-item">
+                <div class="summary-label">Credits Earned</div>
+                <div class="summary-value earned">+86₴</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Credits Spent</div>
+                <div class="summary-value spent">-43₴</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Net Gain</div>
+                <div class="summary-value">+43₴</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            StressBank™ is a speculative design fiction prototype. Credits (₴) calculated using the Emotional Labor Compensation Act formula: (Stress Level - 50) × 0.5
+        </div>
+    </div>
+</body>
+</html>
